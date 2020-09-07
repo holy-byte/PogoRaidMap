@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <title>PoGo Raids Espinho</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin=""/>
+	<link rel="stylesheet" type="text/css" href="mystyle.css">
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+      integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+      crossorigin=""></script>
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.16.min.js"></script>
+	<script src="pogoraids.js"></script>
+	
+  </head>
+  <body onload="scanData();">
+	<div id="header">
+		<span class="align_help"></span>
+		<div>
+			<a href="https://t.me/joinchat/K6A9ERf_MemUhNfOCYM0mw\">
+				<img src="pogo_raid_espinho.jpg" width="36px" height="36px" />
+			</a>
+		</div>
+		<div id="logotitle">
+			<a href="https://t.me/joinchat/K6A9ERf_MemUhNfOCYM0mw\">
+				PoGo Raids Espinho [public beta]
+			</a>
+		</div>
+	</div>
+  	<div class="raidpin" id="raidpintemplate" >
+		<div class="timers" data-raidid="0">
+			<div class="scheduletext" data-seconds="1" data-scheduletime="1">--:--</div>
+			<div class="remainingtext raid_poke timer_round" data-seconds="1" data-opentime="1" data-endtime="1">14:30</div>
+		</div>
+		<div class="gym_pin">
+			<img class="raidpin_img" src="0.png" width="40" height="40" />
+			<img class="raidpin_shadow" src="shadow.png" width="40" height="40" />
+		</div>
+	</div>
+	
+    <div id="mapid">
+	</div>
+	
+	<script>
+	
+    	var mymap = L.map('mapid').setView([41.004, -8.638], 14);
+	
+		/* TESTES
+		var marker = L.marker([41.004, -8.638]).addTo(mymap);
+		
+		var myIcon = L.divIcon({
+			className: 'raidpin',
+			html: document.getElementById("raidpin").innerHTML,
+			iconAnchor: [28, 59]
+		});
+		// you can set .my-div-icon styles in CSS
+		L.marker([41.004, -8.638], {icon: myIcon}).addTo(mymap);
+
+	*/
+
+		mymap.setMaxBounds(mymap.getBounds());
+    
+		L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibmluamFieXRlIiwiYSI6ImNrN3lyb3d6djAxN3AzdW8waTA0NnllMGUifQ.iozbDV4siUP9WpncDPwx6w', {
+			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+			maxZoom: 17,
+			minZoom: 14,
+			id: 'mapbox/streets-v11',
+			tileSize: 512,
+			zoomOffset: -1,
+			accessToken: 'pk.eyJ1IjoibmluamFieXRlIiwiYSI6ImNrN3lyb3d6djAxN3AzdW8waTA0NnllMGUifQ.iozbDV4siUP9WpncDPwx6w'
+		}).addTo(mymap);
+	
+	</script> 
+	
+  </body>
+</html>

@@ -1,0 +1,126 @@
+#mapid { 
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	top: 0;
+    left: 0;
+}
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+#header {
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+	height: 40px;
+    width: 100%;
+    z-index: 10000;
+    background-color: rgba(0,0,0,0.4);
+    padding: 0px;
+    zoom: 1;
+}
+
+.align_help {
+	display: inline-block;
+	height: 100%;
+	vertical-align: middle;
+}
+
+#header img {
+	border-radius: 50%;
+	vertical-align: middle;
+}
+
+#header div {
+	display: inline-block;
+	vertical-align: middle;
+	font-family: verdana;
+}
+
+#logotitle a {
+	font-size: 16px; 
+	color: white;
+	font-weight: bold; 
+	text-decoration: none;
+}
+
+#raidpin {
+	z-index: -1;
+	visibility: hidden;
+}
+
+.leaflet-control-zoom { 
+	position: absolute;
+	top: 40px;
+} 
+
+.timers {
+	text-align: center;
+	width: 56px;
+	position: relative; 
+	left: -7px;
+	font-size: 11px; 
+	font-family: "courier new", courier, monospace;
+	color: white;
+}
+
+.timers div {
+	border-style:solid;
+	border-color: white;
+	padding: 1px; 
+	height: 14px;
+	line-height: 14px; 
+}
+
+.scheduletext {
+	border-radius: 10px 10px 0px 0px;
+	border-width: thin thin 0 thin;
+	background: #139BD0; 
+}
+
+.remainingtext {
+
+}
+
+.raid_egg {
+	background: #F08A91;
+}
+
+.raid_poke {
+	background: #F37647;
+}
+
+.raid_hide {
+	visibility: hidden;
+}
+
+.timer_round {
+	border-radius: 10px 10px 10px 10px;
+	border-width: thin;
+}
+
+.timer_flattop {
+	border-radius: 0px 0px 10px 10px;
+	border-width: 0 thin thin thin;
+}
+
+.raidpin_img {
+	width: 40px;
+	height: 40px;
+	z-index: 2;
+	position: absolute;
+}
+
+.raidpin_shadow {
+	width: 40px;
+	height: 40px;
+	z-index: 1;
+	position: absolute;
+	left: 30px;
+	opacity: 0.3;
+}
