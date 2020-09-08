@@ -290,3 +290,44 @@ setInterval(function(){
 	//alert(value.marker.icon.html.getElementsByClassName("remainingtext")[0].value);
 	
 }, 1000);
+
+function initMap() {
+	let mymap = L.map('mapid').setView([41.004, -8.638], 14);
+
+	/* TESTES
+	var marker = L.marker([41.004, -8.638]).addTo(mymap);
+	
+	var myIcon = L.divIcon({
+		className: 'raidpin',
+		html: document.getElementById("raidpin").innerHTML,
+		iconAnchor: [28, 59]
+	});
+	// you can set .my-div-icon styles in CSS
+	L.marker([41.004, -8.638], {icon: myIcon}).addTo(mymap);
+
+*/
+
+	mymap.setMaxBounds(mymap.getBounds());
+
+	/*
+	L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OSM</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		maxZoom: 17,
+		minZoom: 14,
+		tileSize: 512,
+		zoomOffset: -1
+	}).addTo(mymap);
+	*/
+	
+	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + MBATOKEN, {
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OSM</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		maxZoom: 17,
+		minZoom: 14,
+		id: 'mapbox/streets-v11',
+		tileSize: 512,
+		zoomOffset: -1,
+		accessToken: MBATOKEN
+	}).addTo(mymap);
+	
+	return mymap;
+}
