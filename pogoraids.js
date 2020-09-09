@@ -20,8 +20,6 @@ function httpGetAsync(theUrl, callback) {
 }
 
 function queryData() {
-	document.getElementById('textarea').innerHTML = "";
-	document.getElementById('textarea').innerHTML += "Querying for movies from 1985.";
 
 	var params = {
 		TableName : "PogoRaids"/*,
@@ -71,10 +69,10 @@ function scanData() {
 				if (activeRaids.has(raidInfo.MsgId)) {
 					let oldRaid = activeRaids.get(raidInfo.MsgId);
 					if (JSON.stringify(oldRaid.raid) === JSON.stringify(raidInfo)) {
-						console.log("same raid ... continue");
+						//console.log("same raid ... continue");
 						return; //continue;
 					} else {
-						console.log("same raid with different values...");
+						//console.log("same raid with different values...");
 						activeRaids.set(raidInfo.MsgId, {raid: raidInfo, marker: null, popup: null});
 						
 						if (oldRaid.marker != undefined) {
@@ -179,13 +177,14 @@ function scanData() {
 				activeRaids.get(raidInfo.MsgId).marker = tempGym;
 				
 				let textJoinTelegram = "<b>Entra no grupo de telegram <a href=\"https://t.me/joinchat/K6A9ERf_MemUhNfOCYM0mw\">PoGo Raids Espinho</a>.</b>";
+				let textPokemon = raidInfo.Pokemon.GuideUrl ? "<a href=" + raidInfo.Pokemon.GuideUrl + ">" + raidInfo.Pokemon.Name + "</a>" : raidInfo.Pokemon.Name;
 				
-				tempGym.bindPopup("<b>" + raidInfo.Pokemon.FullTextName.replace(raidInfo.Pokemon.Name, "<a href=" + raidInfo.Pokemon.GuideUrl + ">" + raidInfo.Pokemon.Name + "</a>") + "</b>" + 
+				tempGym.bindPopup(raidInfo.Pokemon.FullTextName.replace(raidInfo.Pokemon.Name, "<b>" + textPokemon + "</b>") + 
 								(raidInfo.Pokemon.FullTextCP ? " [ " + raidInfo.Pokemon.FullTextCP + " ]" : "" )+ "<br>" + 
 								raidInfo.Gym.FullText.replace(raidInfo.Gym.GymName, "<a href=" + raidInfo.Gym.MapUrl + ">" + raidInfo.Gym.GymName + "</a>") + "<br>" +
-								(raidInfo.ScheduleTime.FullText ? raidInfo.ScheduleTime.FullText + "<br>" : "") +
-								"<i>" + raidInfo.TimeInterval.FullText + "</i><br>" +
-								"<i>" + raidInfo.Organizer.FullText.replace(raidInfo.Organizer.Name, "<a href=" + raidInfo.Organizer.Telegram + ">" + raidInfo.Organizer.Name + "</a>") + "</i><br>" +
+								"🕓 " + (raidInfo.ScheduleTime.FullText ? "Marcada para as <b><u>" + raidInfo.ScheduleTime.StartTime + "</b></u><br>" : "") +
+								"<i>Aberta das <b>" + raidInfo.TimeInterval.StartTime + "</b> às <b>" + raidInfo.TimeInterval.EndTime + "</b></i><br>" +
+								"📢" + " <i>" + (raidInfo.Organizer.IsOrganized == 0 ? "Anunciada por " : "Organizada por ") + "<a href=" + raidInfo.Organizer.Telegram + ">" + raidInfo.Organizer.Name + "</a></i><br>" +
 								(raidInfo.Lobby.FullText ? raidInfo.Lobby.FullText + "<br>" : "") +
 								raidHtml +
 								(raidInfo.FooterText ? "<br><b>Queres marcar presença nesta raid?</b><br>" + textJoinTelegram : "<br><b>Queres organizar esta raid?</b><br>" + textJoinTelegram));
@@ -209,7 +208,7 @@ function scanData() {
 					}
 					
 					activeRaids.delete(key);
-					console.log("deleted " + key);
+					//console.log("deleted " + key);
 				}
 			});
 
@@ -321,9 +320,14 @@ function initMap() {
 	L.marker([41.004, -8.638], {icon: myIcon}).addTo(mymap);
 
 */
+	let corner1 = L.latLng(41.03, -8.56);
+	let corner2 = L.latLng(40.97, -8.71);
 
-	mymap.setMaxBounds(mymap.getBounds());
-
+	let bounds = L.latLngBounds(corner1, corner2);
+	mymap.setMaxBounds(bounds);
+	
+	//mymap.setMaxBounds(mymap.getBounds());
+	
 	/*
 	L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OSM</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
