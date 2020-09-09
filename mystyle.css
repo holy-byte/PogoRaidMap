@@ -49,7 +49,7 @@ html, body {
 	text-decoration: none;
 }
 
-#raidpin {
+#raidpintemplate {
 	z-index: -1;
 	visibility: hidden;
 }

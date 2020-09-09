@@ -1,17 +1,3 @@
-
-function httpGetAsync(theUrl, callback)
-{
-	var xmlHttp = new XMLHttpRequest();
-	xmlHttp.onreadystatechange = function() { 
-		if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-			callback(xmlHttp.responseText);
-	}
-	xmlHttp.open("GET", theUrl, true); // true for asynchronous 
-	xmlHttp.send(null);
-}
-
-
-  
 AWS.config.region = 'eu-central-1'; // Region
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 	IdentityPoolId: 'eu-central-1:9cb166ff-a84d-496c-bbb0-3ef306a6badf'
@@ -22,18 +8,16 @@ var activeRaids = new Map();
 var dynamodb = new AWS.DynamoDB();
 var docClient = new AWS.DynamoDB.DocumentClient();
 
-function listMovies() {
-	var params = {};
-	dynamodb.listTables(params, function(err, data) {
-	if (err){
-		document.getElementById('textarea').innerHTML = "Unable to list tables: " + "\n" + JSON.stringify(err, undefined, 2);
-	}
-	else{
-	 document.getElementById('textarea').innerHTML = "List of tables: " + "\n" + JSON.stringify(data, undefined, 2);
-	}
-});
-}
 
+function httpGetAsync(theUrl, callback) {
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange = function() { 
+		if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+			callback(xmlHttp.responseText);
+	}
+	xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+	xmlHttp.send(null);
+}
 
 function queryData() {
 	document.getElementById('textarea').innerHTML = "";
@@ -76,10 +60,31 @@ function scanData() {
 		} else {
 			// Print all the movies
 			//document.getElementById('textarea').innerHTML += "Scan succeeded: " + "\n";
+			
+			let listMsgId = [];
+			
 			data.Items.forEach(function(raidInfo) {
 				
+				listMsgId.push(raidInfo.MsgId);
 				
-				activeRaids.set(raidInfo.MsgId, {raid:raidInfo, marker:null, popup:null});
+				
+				if (activeRaids.has(raidInfo.MsgId)) {
+					let oldRaid = activeRaids.get(raidInfo.MsgId);
+					if (JSON.stringify(oldRaid.raid) === JSON.stringify(raidInfo)) {
+						console.log("same raid ... continue");
+						return; //continue;
+					} else {
+						console.log("same raid with different values...");
+						activeRaids.set(raidInfo.MsgId, {raid: raidInfo, marker: null, popup: null});
+						
+						if (oldRaid.marker != undefined) {
+							mymap.removeLayer(oldRaid.marker);
+						}
+					}
+				} else {
+					activeRaids.set(raidInfo.MsgId, {raid:raidInfo, marker:null, popup:null});
+				}
+				
 				
 				var raidHtml = "";
 				for (var i = 0; i < raidInfo.Participants.length; i++)
@@ -125,11 +130,9 @@ function scanData() {
 				dateStart.setMinutes(minute);
 				
 
-				
 				document.getElementById("raidpintemplate").getElementsByClassName("timers")[0].setAttribute("data-raidid", raidInfo.MsgId);
 				document.getElementById("raidpintemplate").getElementsByClassName("raidpin_img")[0].src=gymImg;
 				document.getElementById("raidpintemplate").getElementsByClassName("remainingtext")[0].setAttribute("data-seconds", (dateEnd - Date.now())/1000 );
-				document.getElementById("raidpintemplate").getElementsByClassName("remainingtext")[0].textContent=raidInfo.TimeInterval.EndTime;
 				document.getElementById("raidpintemplate").getElementsByClassName("remainingtext")[0].setAttribute("data-opentime", dateStart.toISOString());
 				document.getElementById("raidpintemplate").getElementsByClassName("remainingtext")[0].setAttribute("data-endtime", dateEnd.toISOString());
 				
@@ -146,11 +149,8 @@ function scanData() {
 					dateSchedule.setMinutes(minute);
 					
 					document.getElementById("raidpintemplate").getElementsByClassName("scheduletext")[0].setAttribute("data-scheduletime", dateSchedule.toISOString());
-					document.getElementById("raidpintemplate").getElementsByClassName("scheduletext")[0].textContent=raidInfo.ScheduleTime.StartTime;
 				} else {
-					//document.getElementById("raidpintemplate").getElementsByClassName("scheduletext")[0].setAttribute("data-scheduletime", dateSchedule.toISOString());
 					document.getElementById("raidpintemplate").getElementsByClassName("scheduletext")[0].setAttribute("data-scheduletime", 0);
-					document.getElementById("raidpintemplate").getElementsByClassName("scheduletext")[0].textContent= "--:--";
 				}
 				
 				if ( document.getElementById("raidpintemplate").getElementsByClassName("remainingtext")[0].classList.contains('raid_poke') ) {
@@ -160,17 +160,12 @@ function scanData() {
 				if (dateStart > Date.now()) {
 					document.getElementById("raidpintemplate").getElementsByClassName("remainingtext")[0].classList.add('raid_egg');
 					document.getElementById("raidpintemplate").getElementsByClassName("remainingtext")[0].setAttribute("data-seconds", (dateStart - Date.now())/1000 );
-					document.getElementById("raidpintemplate").getElementsByClassName("remainingtext")[0].textContent=raidInfo.TimeInterval.StartTime;
 				} else if (dateEnd > Date.now()) {
 					document.getElementById("raidpintemplate").getElementsByClassName("remainingtext")[0].classList.add('raid_poke');
 					document.getElementById("raidpintemplate").getElementsByClassName("remainingtext")[0].setAttribute("data-seconds", (dateEnd - Date.now())/1000 );
-					document.getElementById("raidpintemplate").getElementsByClassName("remainingtext")[0].textContent=raidInfo.TimeInterval.EndTime;
 				} else {
 					return;
 				}
-				
-
-
 				
 				//document.getElementById('textarea').innerHTML += raidInfo.MsgId + ": " + raidInfo.Pokemon.FullTextName + " - rating: " + raidInfo.Pokemon.GuideUrl + "\n";
 				let raidIcon = L.divIcon({
@@ -202,6 +197,20 @@ function scanData() {
 					sticky: false
 				}).openTooltip();*/
 
+			});
+			
+			activeRaids.forEach((value,key,map)=> {
+				if (!listMsgId.includes(key)) {
+					
+					let currentMarker = value.marker;
+			
+					if (currentMarker != undefined) {
+						mymap.removeLayer(currentMarker);
+					}
+					
+					activeRaids.delete(key);
+					console.log("deleted " + key);
+				}
 			});
 
 			// Continue scanning if we have more gyms (per scan 1MB limitation)
@@ -290,6 +299,12 @@ setInterval(function(){
 	//alert(value.marker.icon.html.getElementsByClassName("remainingtext")[0].value);
 	
 }, 1000);
+
+setInterval(function(){ 
+	
+	scanData();
+	
+}, 60000);
 
 function initMap() {
 	let mymap = L.map('mapid').setView([41.004, -8.638], 14);
