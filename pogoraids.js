@@ -320,8 +320,9 @@ function initMap() {
 	L.marker([41.004, -8.638], {icon: myIcon}).addTo(mymap);
 
 */
-	let corner1 = L.latLng(41.03, -8.56);
-	let corner2 = L.latLng(40.97, -8.71);
+
+	let corner1 = L.latLng(41.07, -8.76);
+	let corner2 = L.latLng(40.92, -8.52);
 
 	let bounds = L.latLngBounds(corner1, corner2);
 	mymap.setMaxBounds(bounds);
